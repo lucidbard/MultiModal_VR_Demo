@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>VR Interactive Drawer with Configurable Joint Tutorial</title>
+</head>
+<body style="font-family: 'Segoe UI', Arial, sans-serif; background-color: #1e1e1e; color: #d4d4d4; padding: 40px; line-height: 1.6; max-width: 1200px; margin: 0 auto;">
+
+    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 30px; border-radius: 10px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+        <h1 style="color: #ffffff; margin: 0 0 10px 0; font-size: 36px; font-weight: bold;">📦 VR Interactive Drawer with Configurable Joint</h1>
+        <p style="color: #f0f0f0; margin: 0; font-size: 18px;">Learn how to create realistic, physics-based sliding drawers in VR</p>
+    </div>
+
+    <div style="background-color: #2d2d30; padding: 25px; border-radius: 8px; margin-bottom: 25px; border-left: 4px solid #4ec9b0;">
+        <h2 style="color: #4ec9b0; margin-top: 0; font-size: 28px;">📋 Overview</h2>
+        <p style="margin-bottom: 10px;">This tutorial will teach you how to:</p>
+        <ul style="margin: 10px 0; padding-left: 25px;">
+            <li style="margin-bottom: 8px;">Set up a drawer with a sliding constraint</li>
+            <li style="margin-bottom: 8px;">Configure physics for smooth drawer movement</li>
+            <li style="margin-bottom: 8px;">Make drawers grabbable with VR controllers</li>
+            <li style="margin-bottom: 8px;">Limit drawer slide distance to prevent it from coming out</li>
+        </ul>
+    </div>
+
+    <div style="background-color: #2d2d30; padding: 25px; border-radius: 8px; margin-bottom: 25px; border-left: 4px solid #ce9178;">
+        <h2 style="color: #ce9178; margin-top: 0; font-size: 28px;">✅ Prerequisites</h2>
+        <ul style="margin: 10px 0; padding-left: 25px;">
+            <li style="margin-bottom: 8px;">Unity with XR Interaction Toolkit installed</li>
+            <li style="margin-bottom: 8px;">A VR scene with XR Rig set up</li>
+            <li style="margin-bottom: 8px;">A furniture piece with drawers (dresser, desk, cabinet)</li>
+        </ul>
+    </div>
+
+    <div style="background-color: #264f78; padding: 20px; border-radius: 8px; margin-bottom: 25px; border-left: 4px solid #3794ff;">
+        <h2 style="color: #3794ff; margin-top: 0; font-size: 24px;">🎯 Understanding the Challenge</h2>
+        <p style="margin-bottom: 10px;">Unlike doors that rotate on hinges, drawers need to:</p>
+        <ul style="margin: 10px 0; padding-left: 25px;">
+            <li style="margin-bottom: 8px;">✓ Slide in ONE direction only (forward/backward)</li>
+            <li style="margin-bottom: 8px;">✓ Stay aligned (no tilting or rotation)</li>
+            <li style="margin-bottom: 8px;">✓ Have limited travel distance (can't pull out infinitely)</li>
+            <li style="margin-bottom: 8px;">✓ Feel smooth and realistic</li>
+        </ul>
+        <p style="margin-top: 15px; font-style: italic;">We'll use a <strong style="color: #4ec9b0;">Configurable Joint</strong> which gives us precise control over which axes can move.</p>
+    </div>
+
+    <div style="background-color: #2d2d30; padding: 25px; border-radius: 8px; margin-bottom: 25px;">
+        <h2 style="color: #569cd6; margin-top: 0; font-size: 28px; border-bottom: 2px solid #569cd6; padding-bottom: 10px;">Step 1: Prepare Your Drawer Model</h2>
+        <p style="margin-bottom: 15px;">You'll need a furniture piece with separate drawer GameObjects:</p>
+
+        <div style="background-color: #1e1e1e; padding: 20px; border-radius: 4px; font-family: 'Courier New', monospace; margin-bottom: 15px;">
+            <div style="color: #4ec9b0;">DrawerUnit <span style="color: #6a9955;">(parent)</span></div>
+            <div style="margin-left: 15px; color: #9cdcfe;">├── Cabinet_Body</div>
+            <div style="margin-left: 15px; color: #ce9178;">├── Drawer_1 <span style="color: #6a9955;">(this is what we'll make interactive)</span></div>
+            <div style="margin-left: 30px; color: #9cdcfe;">│   └── Drawer_Handle</div>
+            <div style="margin-left: 15px; color: #9cdcfe;">├── Drawer_2</div>
+            <div style="margin-left: 15px; color: #9cdcfe;">├── Drawer_3</div>
+            <div style="margin-left: 15px; color: #9cdcfe;">└── Drawer_4</div>
+        </div>
+
+        <div style="background-color: #3a2929; padding: 15px; border-radius: 4px; border-left: 4px solid #f48771;">
+            <h4 style="color: #f48771; margin-top: 0; font-size: 18px;">⚠️ Important</h4>
+            <p style="margin: 0;">Each drawer should be a separate GameObject, not part of the cabinet mesh.</p>
+        </div>
+    </div>
+
+    <div style="background-color: #2d2d30; padding: 25px; border-radius: 8px; margin-bottom: 25px;">
+        <h2 style="color: #569cd6; margin-top: 0; font-size: 28px; border-bottom: 2px solid #569cd6; padding-bottom: 10px;">Step 2: Add Required Components</h2>
+        <p style="margin-bottom: 15px;">Select your drawer GameObject and add these three components:</p>
+
+        <div style="background-color: #1e1e1e; padding: 15px; margin-bottom: 15px; border-radius: 4px; border-left: 3px solid #4ec9b0;">
+            <h3 style="color: #4ec9b0; margin-top: 0; font-size: 20px;">A. Rigidbody Component</h3>
+            <p style="margin: 0; font-family: 'Courier New', monospace; color: #ce9178;">Add Component → Physics → Rigidbody</p>
+        </div>
+
+        <div style="background-color: #1e1e1e; padding: 15px; margin-bottom: 15px; border-radius: 4px; border-left: 3px solid #4ec9b0;">
+            <h3 style="color: #4ec9b0; margin-top: 0; font-size: 20px;">B. Configurable Joint Component</h3>
+            <p style="margin: 0; font-family: 'Courier New', monospace; color: #ce9178;">Add Component → Physics → Configurable Joint</p>
+        </div>
+
+        <div style="background-color: #1e1e1e; padding: 15px; margin-bottom: 15px; border-radius: 4px; border-left: 3px solid #4ec9b0;">
+            <h3 style="color: #4ec9b0; margin-top: 0; font-size: 20px;">C. XR Grab Interactable Component</h3>
+            <p style="margin: 0; font-family: 'Courier New', monospace; color: #ce9178;">Add Component → XR → XR Grab Interactable</p>
+        </div>
+    </div>
+
+    <div style="background-color: #2d2d30; padding: 25px; border-radius: 8px; margin-bottom: 25px;">
+        <h2 style="color: #569cd6; margin-top: 0; font-size: 28px; border-bottom: 2px solid #569cd6; padding-bottom: 10px;">Step 3: Configure the Rigidbody</h2>
+
+        <div style="background-color: #1e1e1e; padding: 20px; border-radius: 4px; font-family: 'Courier New', monospace; margin-bottom: 20px;">
+            <div style="margin-bottom: 10px;"><span style="color: #9cdcfe;">Mass:</span> <span style="color: #b5cea8;">2</span></div>
+            <div style="margin-bottom: 10px;"><span style="color: #9cdcfe;">Drag:</span> <span style="color: #b5cea8;">2</span></div>
+            <div style="margin-bottom: 10px;"><span style="color: #9cdcfe;">Angular Drag:</span> <span style="color: #b5cea8;">10</span></div>
+            <div style="margin-bottom: 10px;"><span style="color: #9cdcfe;">Use Gravity:</span> <span style="color: #569cd6;">FALSE</span> (unchecked)</div>
+            <div><span style="color: #9cdcfe;">Is Kinematic:</span> <span style="color: #569cd6;">FALSE</span> (unchecked)</div>
+        </div>
+
+        <div style="background-color: #264f78; padding: 15px; border-radius: 4px; border-left: 4px solid #3794ff;">
+            <h4 style="color: #3794ff; margin-top: 0; font-size: 18px;">💡 Why these settings?</h4>
+            <ul style="margin: 10px 0; padding-left: 25px;">
+                <li style="margin-bottom: 8px;"><strong>Mass (2):</strong> Drawers are lighter than doors</li>
+                <li style="margin-bottom: 8px;"><strong>Drag (2):</strong> Higher drag for controlled sliding</li>
+                <li style="margin-bottom: 8px;"><strong>Angular Drag (10):</strong> High value prevents any rotation</li>
+                <li style="margin-bottom: 8px;"><strong>No Gravity:</strong> Keeps drawer horizontal</li>
+            </ul>
+        </div>
+    </div>
+
+    <div style="background-color: #2d2d30; padding: 25px; border-radius: 8px; margin-bottom: 25px;">
+        <h2 style="color: #569cd6; margin-top: 0; font-size: 28px; border-bottom: 2px solid #569cd6; padding-bottom: 10px;">Step 4: Configure the Configurable Joint</h2>
+        <p style="margin-bottom: 15px; font-size: 18px; color: #f48771;"><strong>⚡ This is the most important part!</strong></p>
+
+        <h3 style="color: #4ec9b0; font-size: 22px; margin-top: 20px;">Motion Settings</h3>
+        <div style="background-color: #1e1e1e; padding: 20px; border-radius: 4px; font-family: 'Courier New', monospace; margin-bottom: 20px;">
+            <div style="margin-bottom: 10px;"><span style="color: #9cdcfe;">X Motion:</span> <span style="color: #f48771;">Locked</span></div>
+            <div style="margin-bottom: 10px;"><span style="color: #9cdcfe;">Y Motion:</span> <span style="color: #f48771;">Locked</span></div>
+            <div style="margin-bottom: 10px;"><span style="color: #9cdcfe;">Z Motion:</span> <span style="color: #4ec9b0;">Limited</span></div>
+        </div>
+
+        <div style="background-color: #264f78; padding: 15px; border-radius: 4px; border-left: 4px solid #3794ff; margin-bottom: 20px;">
+            <h4 style="color: #3794ff; margin-top: 0; font-size: 18px;">Understanding the Axes:</h4>
+            <ul style="margin: 10px 0; padding-left: 25px;">
+                <li style="margin-bottom: 8px;"><strong>X Motion:</strong> Left/Right sliding (we lock this)</li>
+                <li style="margin-bottom: 8px;"><strong>Y Motion:</strong> Up/Down sliding (we lock this)</li>
+                <li style="margin-bottom: 8px;"><strong>Z Motion:</strong> Forward/Backward sliding (we allow this with limits)</li>
+            </ul>
+            <p style="margin-top: 15px; padding: 12px; background-color: #3a2929; border-radius: 4px;"><strong style="color: #f48771;">Important:</strong> Determine which axis your drawer slides along! If it's X instead of Z, adjust accordingly.</p>
+        </div>
+
+        <h3 style="color: #4ec9b0; font-size: 22px; margin-top: 20px;">Rotation Settings</h3>
+        <p style="margin-bottom: 10px;">Lock all rotations to prevent the drawer from tilting:</p>
+        <div style="background-color: #1e1e1e; padding: 20px; border-radius: 4px; font-family: 'Courier New', monospace; margin-bottom: 20px;">
+            <div style="margin-bottom: 10px;"><span style="color: #9cdcfe;">Angular X Motion:</span> <span style="color: #f48771;">Locked</span></div>
+            <div style="margin-bottom: 10px;"><span style="color: #9cdcfe;">Angular Y Motion:</span> <span style="color: #f48771;">Locked</span></div>
+            <div style="margin-bottom: 10px;"><span style="color: #9cdcfe;">Angular Z Motion:</span> <span style="color: #f48771;">Locked</span></div>
+        </div>
+
+        <h3 style="color: #4ec9b0; font-size: 22px; margin-top: 20px;">Linear Limit (Controls How Far Drawer Opens)</h3>
+        <div style="background-color: #1e1e1e; padding: 20px; border-radius: 4px; font-family: 'Courier New', monospace; margin-bottom: 20px;">
+            <div style="margin-bottom: 10px;"><span style="color: #9cdcfe;">Limit:</span> <span style="color: #b5cea8;">0.4</span> <span style="color: #6a9955;">// adjust based on drawer depth</span></div>
+            <div style="margin-bottom: 10px;"><span style="color: #9cdcfe;">Bounciness:</span> <span style="color: #b5cea8;">0</span></div>
+            <div><span style="color: #9cdcfe;">Contact Distance:</span> <span style="color: #b5cea8;">0</span></div>
+        </div>
+
+        <div style="background-color: #264f78; padding: 15px; border-radius: 4px; border-left: 4px solid #3794ff;">
+            <h4 style="color: #3794ff; margin-top: 0; font-size: 18px;">Setting the Right Limit Value:</h4>
+            <ul style="margin: 10px 0; padding-left: 25px;">
+                <li style="margin-bottom: 8px;">This value is in Unity units (meters)</li>
+                <li style="margin-bottom: 8px;"><code style="background-color: #1e1e1e; padding: 2px 6px; border-radius: 3px;">0.4</code> = 40cm (about 16 inches)</li>
+                <li style="margin-bottom: 8px;">Shallow drawer: <code style="background-color: #1e1e1e; padding: 2px 6px; border-radius: 3px;">0.2 - 0.3</code></li>
+                <li style="margin-bottom: 8px;">Standard drawer: <code style="background-color: #1e1e1e; padding: 2px 6px; border-radius: 3px;">0.4 - 0.5</code></li>
+                <li>Deep drawer: <code style="background-color: #1e1e1e; padding: 2px 6px; border-radius: 3px;">0.6 - 0.8</code></li>
+            </ul>
+        </div>
+    </div>
+
+    <div style="background-color: #2d2d30; padding: 25px; border-radius: 8px; margin-bottom: 25px;">
+        <h2 style="color: #569cd6; margin-top: 0; font-size: 28px; border-bottom: 2px solid #569cd6; padding-bottom: 10px;">Step 5: Configure XR Grab Interactable</h2>
+
+        <div style="background-color: #1e1e1e; padding: 20px; border-radius: 4px; font-family: 'Courier New', monospace;">
+            <div style="margin-bottom: 10px;"><span style="color: #9cdcfe;">Movement Type:</span> <span style="color: #4ec9b0;">Kinematic</span></div>
+            <div style="margin-bottom: 10px;"><span style="color: #9cdcfe;">Track Position:</span> <span style="color: #569cd6;">FALSE</span> (unchecked)</div>
+            <div style="margin-bottom: 10px;"><span style="color: #9cdcfe;">Track Rotation:</span> <span style="color: #569cd6;">FALSE</span> (unchecked)</div>
+            <div><span style="color: #9cdcfe;">Throw On Detach:</span> <span style="color: #569cd6;">FALSE</span> (unchecked)</div>
+        </div>
+    </div>
+
+    <div style="background-color: #2d2d30; padding: 25px; border-radius: 8px; margin-bottom: 25px;">
+        <h2 style="color: #569cd6; margin-top: 0; font-size: 28px; border-bottom: 2px solid #569cd6; padding-bottom: 10px;">Step 6: Test Your Drawer</h2>
+
+        <ol style="margin: 15px 0; padding-left: 25px; font-size: 16px;">
+            <li style="margin-bottom: 12px;">Enter Play Mode</li>
+            <li style="margin-bottom: 12px;">Use your VR controllers (or XR Device Simulator)</li>
+            <li style="margin-bottom: 12px;">Grab the drawer handle with the grip button</li>
+            <li style="margin-bottom: 12px;">Pull toward you to open</li>
+            <li style="margin-bottom: 12px;">Push away to close</li>
+            <li style="margin-bottom: 12px;">Release to let go</li>
+        </ol>
+    </div>
+
+    <div style="background-color: #3a2929; padding: 25px; border-radius: 8px; margin-bottom: 25px; border-left: 4px solid #f48771;">
+        <h2 style="color: #f48771; margin-top: 0; font-size: 28px;">🔧 Troubleshooting</h2>
+
+        <div style="margin-bottom: 20px;">
+            <h3 style="color: #f48771; font-size: 20px; margin-bottom: 10px;">Drawer falls down or moves wrong direction:</h3>
+            <ul style="margin: 5px 0; padding-left: 25px;">
+                <li style="margin-bottom: 5px;">Check that "Use Gravity" is OFF</li>
+                <li style="margin-bottom: 5px;">Verify you locked the correct axes</li>
+                <li>Make sure the correct axis is "Limited" not "Free"</li>
+            </ul>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <h3 style="color: #f48771; font-size: 20px; margin-bottom: 10px;">Drawer pulls completely out:</h3>
+            <ul style="margin: 5px 0; padding-left: 25px;">
+                <li style="margin-bottom: 5px;">Check the Linear Limit value</li>
+                <li style="margin-bottom: 5px;">Ensure motion is set to "Limited" not "Free"</li>
+                <li>Try reducing the Limit value</li>
+            </ul>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <h3 style="color: #f48771; font-size: 20px; margin-bottom: 10px;">Drawer feels too loose or wobbly:</h3>
+            <ul style="margin: 5px 0; padding-left: 25px;">
+                <li style="margin-bottom: 5px;">Increase Drag to 3-5</li>
+                <li style="margin-bottom: 5px;">Increase Angular Drag to 15-20</li>
+                <li>Check that all angular motions are "Locked"</li>
+            </ul>
+        </div>
+    </div>
+
+    <div style="background-color: #2d2d30; padding: 25px; border-radius: 8px; margin-bottom: 25px;">
+        <h2 style="color: #569cd6; margin-top: 0; font-size: 28px; border-bottom: 2px solid #569cd6; padding-bottom: 10px;">Understanding Axes</h2>
+        <p style="margin-bottom: 15px;">Visual guide to understanding which axis to use:</p>
+
+        <div style="background-color: #1e1e1e; padding: 20px; border-radius: 4px; font-family: 'Courier New', monospace;">
+            <div style="color: #6a9955;">Front View of Drawer:</div>
+            <div style="margin-top: 10px; color: #9cdcfe;">    Y (up)</div>
+            <div style="color: #9cdcfe;">    |</div>
+            <div style="color: #9cdcfe;">    |_____ X (right)</div>
+            <div style="color: #9cdcfe;">   /</div>
+            <div style="color: #9cdcfe;">  Z (forward - toward player)</div>
+        </div>
+
+        <div style="background-color: #264f78; padding: 15px; margin-top: 20px; border-radius: 4px; border-left: 4px solid #3794ff;">
+            <h4 style="color: #3794ff; margin-top: 0; font-size: 18px;">Common Configurations:</h4>
+            <ul style="margin: 10px 0; padding-left: 25px;">
+                <li style="margin-bottom: 8px;"><strong>Drawers pulling toward you:</strong> Z Motion = Limited</li>
+                <li style="margin-bottom: 8px;"><strong>Side-sliding drawers:</strong> X Motion = Limited</li>
+                <li><strong>Vertical drawers:</strong> Y Motion = Limited</li>
+            </ul>
+        </div>
+    </div>
+
+    <div style="background-color: #2d2d30; padding: 25px; border-radius: 8px; margin-bottom: 25px;">
+        <h2 style="color: #569cd6; margin-top: 0; font-size: 28px; border-bottom: 2px solid #569cd6; padding-bottom: 10px;">📊 Common Drawer Types</h2>
+
+        <div style="background-color: #1e1e1e; padding: 20px; margin-bottom: 15px; border-radius: 4px; border-left: 3px solid #4ec9b0;">
+            <h3 style="color: #4ec9b0; margin-top: 0; font-size: 20px;">Standard Front-Opening Drawer</h3>
+            <div style="font-family: 'Courier New', monospace; margin-top: 10px;">
+                <div style="color: #9cdcfe;">X Motion: Locked</div>
+                <div style="color: #9cdcfe;">Y Motion: Locked</div>
+                <div style="color: #4ec9b0;">Z Motion: Limited (0.4)</div>
+                <div style="color: #f48771;">All Rotations: Locked</div>
+            </div>
+        </div>
+
+        <div style="background-color: #1e1e1e; padding: 20px; margin-bottom: 15px; border-radius: 4px; border-left: 3px solid #ce9178;">
+            <h3 style="color: #ce9178; margin-top: 0; font-size: 20px;">File Cabinet Drawer (deeper)</h3>
+            <div style="font-family: 'Courier New', monospace; margin-top: 10px;">
+                <div style="color: #4ec9b0;">Z Motion: Limited (0.7)</div>
+                <div style="color: #9cdcfe;">Drag: 3 (heavier feel)</div>
+                <div style="color: #9cdcfe;">Mass: 4 (file folders are heavy!)</div>
+            </div>
+        </div>
+
+        <div style="background-color: #1e1e1e; padding: 20px; border-radius: 4px; border-left: 3px solid #dcdcaa;">
+            <h3 style="color: #dcdcaa; margin-top: 0; font-size: 20px;">Jewelry Drawer (shallow, smooth)</h3>
+            <div style="font-family: 'Courier New', monospace; margin-top: 10px;">
+                <div style="color: #4ec9b0;">Z Motion: Limited (0.15)</div>
+                <div style="color: #9cdcfe;">Drag: 1 (very smooth)</div>
+                <div style="color: #9cdcfe;">Mass: 0.5 (light)</div>
+            </div>
+        </div>
+    </div>
+
+    <div style="background-color: #2d453e; padding: 25px; border-radius: 8px; margin-bottom: 25px; border-left: 4px solid #4ec9b0;">
+        <h2 style="color: #4ec9b0; margin-top: 0; font-size: 28px;">✅ Summary</h2>
+        <p style="margin-bottom: 15px; font-size: 16px;">You've successfully created VR interactive drawers! Key takeaways:</p>
+        <ul style="margin: 10px 0; padding-left: 25px; font-size: 16px;">
+            <li style="margin-bottom: 10px;">✅ Drawers need Rigidbody (non-kinematic) for physics</li>
+            <li style="margin-bottom: 10px;">✅ Configurable Joint restricts movement to one sliding axis</li>
+            <li style="margin-bottom: 10px;">✅ Lock 5 axes, limit 1 axis for perfect drawer behavior</li>
+            <li style="margin-bottom: 10px;">✅ Linear Limit prevents drawer from coming completely out</li>
+            <li style="margin-bottom: 10px;">✅ XR Grab Interactable makes it grabbable in VR</li>
+        </ul>
+    </div>
+
+    <div style="background-color: #2d2d30; padding: 25px; border-radius: 8px; margin-bottom: 25px;">
+        <h2 style="color: #569cd6; margin-top: 0; font-size: 28px;">⚖️ Comparison: Configurable vs Hinge Joint</h2>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+            <thead>
+                <tr style="background-color: #1e1e1e;">
+                    <th style="padding: 12px; text-align: left; border: 1px solid #3e3e42; color: #4ec9b0;">Feature</th>
+                    <th style="padding: 12px; text-align: left; border: 1px solid #3e3e42; color: #4ec9b0;">Configurable Joint</th>
+                    <th style="padding: 12px; text-align: left; border: 1px solid #3e3e42; color: #4ec9b0;">Hinge Joint</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="background-color: #252526;">
+                    <td style="padding: 12px; border: 1px solid #3e3e42;"><strong>Best For</strong></td>
+                    <td style="padding: 12px; border: 1px solid #3e3e42;">Linear sliding (drawers, sliding doors)</td>
+                    <td style="padding: 12px; border: 1px solid #3e3e42;">Rotation (doors, levers)</td>
+                </tr>
+                <tr style="background-color: #1e1e1e;">
+                    <td style="padding: 12px; border: 1px solid #3e3e42;"><strong>Axes Control</strong></td>
+                    <td style="padding: 12px; border: 1px solid #3e3e42;">Full control over all 6 degrees of freedom</td>
+                    <td style="padding: 12px; border: 1px solid #3e3e42;">Only rotation around one axis</td>
+                </tr>
+                <tr style="background-color: #252526;">
+                    <td style="padding: 12px; border: 1px solid #3e3e42;"><strong>Complexity</strong></td>
+                    <td style="padding: 12px; border: 1px solid #3e3e42;">More settings to configure</td>
+                    <td style="padding: 12px; border: 1px solid #3e3e42;">Simpler setup</td>
+                </tr>
+                <tr style="background-color: #1e1e1e;">
+                    <td style="padding: 12px; border: 1px solid #3e3e42;"><strong>Use Case</strong></td>
+                    <td style="padding: 12px; border: 1px solid #3e3e42;">Drawers, sliders, sliding doors</td>
+                    <td style="padding: 12px; border: 1px solid #3e3e42;">Swinging doors, levers, valves</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="background-color: #2d2d30; padding: 25px; border-radius: 8px; text-align: center;">
+        <h2 style="color: #569cd6; margin-top: 0; font-size: 28px;">🚀 Happy VR Development!</h2>
+        <p style="color: #b5b5b5; font-size: 14px; margin: 0;">Created with ❤️ for Unity XR developers</p>
+    </div>
+
+</body>
+</html>

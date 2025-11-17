@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>VR Interactive Door with Hinge Joint Tutorial</title>
+</head>
+<body style="font-family: 'Segoe UI', Arial, sans-serif; background-color: #1e1e1e; color: #d4d4d4; padding: 40px; line-height: 1.6; max-width: 1200px; margin: 0 auto;">
+
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 10px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+        <h1 style="color: #ffffff; margin: 0 0 10px 0; font-size: 36px; font-weight: bold;">🚪 VR Interactive Door with Hinge Joint</h1>
+        <p style="color: #f0f0f0; margin: 0; font-size: 18px;">Learn how to create realistic, physics-based doors in VR using Unity's XR Interaction Toolkit</p>
+    </div>
+
+    <div style="background-color: #2d2d30; padding: 25px; border-radius: 8px; margin-bottom: 25px; border-left: 4px solid #4ec9b0;">
+        <h2 style="color: #4ec9b0; margin-top: 0; font-size: 28px;">📋 Overview</h2>
+        <p style="margin-bottom: 10px;">This tutorial will teach you how to:</p>
+        <ul style="margin: 10px 0; padding-left: 25px;">
+            <li style="margin-bottom: 8px;">Set up a door with a proper hinge joint</li>
+            <li style="margin-bottom: 8px;">Configure physics for realistic door movement</li>
+            <li style="margin-bottom: 8px;">Make the door grabbable with VR controllers</li>
+            <li style="margin-bottom: 8px;">Set rotation limits for the door swing</li>
+        </ul>
+    </div>
+
+    <div style="background-color: #2d2d30; padding: 25px; border-radius: 8px; margin-bottom: 25px; border-left: 4px solid #ce9178;">
+        <h2 style="color: #ce9178; margin-top: 0; font-size: 28px;">✅ Prerequisites</h2>
+        <ul style="margin: 10px 0; padding-left: 25px;">
+            <li style="margin-bottom: 8px;">Unity with XR Interaction Toolkit installed</li>
+            <li style="margin-bottom: 8px;">A VR scene with XR Rig set up</li>
+            <li style="margin-bottom: 8px;">A door model/prefab (or any object you want to turn into a door)</li>
+        </ul>
+    </div>
+
+    <div style="background-color: #2d2d30; padding: 25px; border-radius: 8px; margin-bottom: 25px;">
+        <h2 style="color: #569cd6; margin-top: 0; font-size: 28px; border-bottom: 2px solid #569cd6; padding-bottom: 10px;">Step 1: Create or Place Your Door</h2>
+        <ol style="margin: 15px 0; padding-left: 25px;">
+            <li style="margin-bottom: 12px;">Add a door object to your scene (or use an existing door prefab)</li>
+            <li style="margin-bottom: 12px;">Position it where you want the door to be
+                <div style="background-color: #1e1e1e; padding: 12px; margin-top: 8px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 14px;">
+                    Example position: <span style="color: #b5cea8;">(-2.5, 0, 2.5)</span>
+                </div>
+            </li>
+            <li style="margin-bottom: 12px;">Make sure it's properly sized and oriented</li>
+        </ol>
+    </div>
+
+    <div style="background-color: #2d2d30; padding: 25px; border-radius: 8px; margin-bottom: 25px;">
+        <h2 style="color: #569cd6; margin-top: 0; font-size: 28px; border-bottom: 2px solid #569cd6; padding-bottom: 10px;">Step 2: Add Required Components</h2>
+        <p style="margin-bottom: 15px;">Select your door GameObject and add these three components:</p>
+
+        <div style="background-color: #1e1e1e; padding: 15px; margin-bottom: 15px; border-radius: 4px; border-left: 3px solid #4ec9b0;">
+            <h3 style="color: #4ec9b0; margin-top: 0; font-size: 20px;">A. Rigidbody Component</h3>
+            <p style="margin: 0; font-family: 'Courier New', monospace; color: #ce9178;">Add Component → Physics → Rigidbody</p>
+        </div>
+
+        <div style="background-color: #1e1e1e; padding: 15px; margin-bottom: 15px; border-radius: 4px; border-left: 3px solid #4ec9b0;">
+            <h3 style="color: #4ec9b0; margin-top: 0; font-size: 20px;">B. Hinge Joint Component</h3>
+            <p style="margin: 0; font-family: 'Courier New', monospace; color: #ce9178;">Add Component → Physics → Hinge Joint</p>
+        </div>
+
+        <div style="background-color: #1e1e1e; padding: 15px; margin-bottom: 15px; border-radius: 4px; border-left: 3px solid #4ec9b0;">
+            <h3 style="color: #4ec9b0; margin-top: 0; font-size: 20px;">C. XR Grab Interactable Component</h3>
+            <p style="margin: 0; font-family: 'Courier New', monospace; color: #ce9178;">Add Component → XR → XR Grab Interactable</p>
+        </div>
+    </div>
+
+    <div style="background-color: #2d2d30; padding: 25px; border-radius: 8px; margin-bottom: 25px;">
+        <h2 style="color: #569cd6; margin-top: 0; font-size: 28px; border-bottom: 2px solid #569cd6; padding-bottom: 10px;">Step 3: Configure the Rigidbody</h2>
+        <p style="margin-bottom: 15px;">Configure the Rigidbody component with these settings:</p>
+
+        <div style="background-color: #1e1e1e; padding: 20px; border-radius: 4px; font-family: 'Courier New', monospace;">
+            <div style="margin-bottom: 10px;"><span style="color: #9cdcfe;">Mass:</span> <span style="color: #b5cea8;">5</span></div>
+            <div style="margin-bottom: 10px;"><span style="color: #9cdcfe;">Drag:</span> <span style="color: #b5cea8;">0.5</span></div>
+            <div style="margin-bottom: 10px;"><span style="color: #9cdcfe;">Angular Drag:</span> <span style="color: #b5cea8;">5</span></div>
+            <div style="margin-bottom: 10px;"><span style="color: #9cdcfe;">Use Gravity:</span> <span style="color: #569cd6;">FALSE</span> (unchecked)</div>
+            <div><span style="color: #9cdcfe;">Is Kinematic:</span> <span style="color: #569cd6;">FALSE</span> (unchecked)</div>
+        </div>
+
+        <div style="background-color: #264f78; padding: 15px; margin-top: 20px; border-radius: 4px; border-left: 4px solid #3794ff;">
+            <h4 style="color: #3794ff; margin-top: 0; font-size: 18px;">💡 Why these settings?</h4>
+            <ul style="margin: 10px 0; padding-left: 25px; color: #d4d4d4;">
+                <li style="margin-bottom: 8px;"><strong>Mass (5):</strong> Makes the door feel substantial but not too heavy</li>
+                <li style="margin-bottom: 8px;"><strong>Drag (0.5):</strong> Adds slight air resistance for smoother movement</li>
+                <li style="margin-bottom: 8px;"><strong>Angular Drag (5):</strong> Prevents the door from spinning too freely</li>
+                <li style="margin-bottom: 8px;"><strong>No Gravity:</strong> Keeps the door in place horizontally</li>
+            </ul>
+        </div>
+    </div>
+
+    <div style="background-color: #2d2d30; padding: 25px; border-radius: 8px; margin-bottom: 25px;">
+        <h2 style="color: #569cd6; margin-top: 0; font-size: 28px; border-bottom: 2px solid #569cd6; padding-bottom: 10px;">Step 4: Create a Door Frame Anchor</h2>
+        <p style="margin-bottom: 15px;">The hinge joint needs something solid to attach to (the door frame).</p>
+
+        <ol style="margin: 15px 0; padding-left: 25px;">
+            <li style="margin-bottom: 12px;">Create an empty GameObject: <span style="background-color: #1e1e1e; padding: 4px 8px; border-radius: 3px; font-family: 'Courier New', monospace; color: #ce9178;">Right-click in Hierarchy → Create Empty</span></li>
+            <li style="margin-bottom: 12px;">Name it: <span style="background-color: #1e1e1e; padding: 4px 8px; border-radius: 3px; font-family: 'Courier New', monospace; color: #4ec9b0;">DoorFrameAnchor</span></li>
+            <li style="margin-bottom: 12px;">Position it at the hinge point of your door
+                <div style="background-color: #1e1e1e; padding: 12px; margin-top: 8px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 14px;">
+                    Example: <span style="color: #b5cea8;">(-2.9, 1, 2.5)</span> - at the edge where the door hinges
+                </div>
+            </li>
+            <li style="margin-bottom: 12px;">Add a <strong>Rigidbody</strong> component to the anchor</li>
+            <li style="margin-bottom: 12px;">Set the anchor's Rigidbody to <span style="background-color: #1e1e1e; padding: 4px 8px; border-radius: 3px; font-family: 'Courier New', monospace; color: #569cd6;">Is Kinematic: TRUE</span></li>
+        </ol>
+
+        <div style="background-color: #3a2929; padding: 15px; margin-top: 20px; border-radius: 4px; border-left: 4px solid #f48771;">
+            <h4 style="color: #f48771; margin-top: 0; font-size: 18px;">⚠️ Important</h4>
+            <p style="margin: 0; color: #d4d4d4;">The anchor must be kinematic so it doesn't move!</p>
+        </div>
+    </div>
+
+    <div style="background-color: #2d2d30; padding: 25px; border-radius: 8px; margin-bottom: 25px;">
+        <h2 style="color: #569cd6; margin-top: 0; font-size: 28px; border-bottom: 2px solid #569cd6; padding-bottom: 10px;">Step 5: Configure the Hinge Joint</h2>
+
+        <h3 style="color: #4ec9b0; font-size: 22px; margin-top: 20px;">Basic Hinge Settings</h3>
+        <div style="background-color: #1e1e1e; padding: 20px; border-radius: 4px; font-family: 'Courier New', monospace; margin-bottom: 20px;">
+            <div style="margin-bottom: 10px;"><span style="color: #9cdcfe;">Axis:</span> <span style="color: #b5cea8;">(0, 1, 0)</span> <span style="color: #6a9955;">// Y-axis for vertical rotation</span></div>
+            <div style="margin-bottom: 10px;"><span style="color: #9cdcfe;">Anchor:</span> <span style="color: #b5cea8;">(-0.4, 0, 0)</span> <span style="color: #6a9955;">// Adjust based on door pivot point</span></div>
+            <div><span style="color: #9cdcfe;">Connected Body:</span> <span style="color: #ce9178;">[Drag DoorFrameAnchor here]</span></div>
+        </div>
+
+        <div style="background-color: #264f78; padding: 15px; border-radius: 4px; border-left: 4px solid #3794ff; margin-bottom: 20px;">
+            <h4 style="color: #3794ff; margin-top: 0; font-size: 18px;">Understanding the Axis:</h4>
+            <ul style="margin: 10px 0; padding-left: 25px; color: #d4d4d4;">
+                <li style="margin-bottom: 8px;"><code style="background-color: #1e1e1e; padding: 2px 6px; border-radius: 3px; color: #b5cea8;">(0, 1, 0)</code> = Y-axis rotation (door swings left/right)</li>
+                <li style="margin-bottom: 8px;"><code style="background-color: #1e1e1e; padding: 2px 6px; border-radius: 3px; color: #b5cea8;">(1, 0, 0)</code> = X-axis rotation (door swings up/down - like a drawbridge)</li>
+                <li><code style="background-color: #1e1e1e; padding: 2px 6px; border-radius: 3px; color: #b5cea8;">(0, 0, 1)</code> = Z-axis rotation (door spins like a revolving door)</li>
+            </ul>
+        </div>
+
+        <h3 style="color: #4ec9b0; font-size: 22px; margin-top: 20px;">Enable Rotation Limits</h3>
+        <div style="background-color: #1e1e1e; padding: 20px; border-radius: 4px; font-family: 'Courier New', monospace;">
+            <div style="margin-bottom: 15px; color: #9cdcfe;">Use Limits: <span style="color: #569cd6;">TRUE</span> (checked)</div>
+            <div style="margin-left: 20px;">
+                <div style="margin-bottom: 8px;"><span style="color: #9cdcfe;">Min:</span> <span style="color: #b5cea8;">0</span></div>
+                <div style="margin-bottom: 8px;"><span style="color: #9cdcfe;">Max:</span> <span style="color: #b5cea8;">90</span></div>
+                <div style="margin-bottom: 8px;"><span style="color: #9cdcfe;">Bounciness:</span> <span style="color: #b5cea8;">0</span></div>
+                <div style="margin-bottom: 8px;"><span style="color: #9cdcfe;">Bounce Min Velocity:</span> <span style="color: #b5cea8;">0.2</span></div>
+                <div><span style="color: #9cdcfe;">Contact Distance:</span> <span style="color: #b5cea8;">0</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div style="background-color: #2d2d30; padding: 25px; border-radius: 8px; margin-bottom: 25px;">
+        <h2 style="color: #569cd6; margin-top: 0; font-size: 28px; border-bottom: 2px solid #569cd6; padding-bottom: 10px;">Step 6: Configure XR Grab Interactable</h2>
+
+        <div style="background-color: #1e1e1e; padding: 20px; border-radius: 4px; font-family: 'Courier New', monospace;">
+            <div style="margin-bottom: 10px;"><span style="color: #9cdcfe;">Movement Type:</span> <span style="color: #4ec9b0;">Kinematic</span></div>
+            <div style="margin-bottom: 10px;"><span style="color: #9cdcfe;">Track Position:</span> <span style="color: #569cd6;">FALSE</span> (unchecked)</div>
+            <div style="margin-bottom: 10px;"><span style="color: #9cdcfe;">Track Rotation:</span> <span style="color: #569cd6;">FALSE</span> (unchecked)</div>
+            <div><span style="color: #9cdcfe;">Throw On Detach:</span> <span style="color: #569cd6;">FALSE</span> (unchecked)</div>
+        </div>
+
+        <div style="background-color: #264f78; padding: 15px; margin-top: 20px; border-radius: 4px; border-left: 4px solid #3794ff;">
+            <h4 style="color: #3794ff; margin-top: 0; font-size: 18px;">💡 Why these settings?</h4>
+            <ul style="margin: 10px 0; padding-left: 25px; color: #d4d4d4;">
+                <li style="margin-bottom: 8px;"><strong>Kinematic Movement:</strong> Works well with physics joints</li>
+                <li style="margin-bottom: 8px;"><strong>No Position/Rotation Tracking:</strong> The hinge joint controls movement</li>
+                <li style="margin-bottom: 8px;"><strong>No Throwing:</strong> Prevents unrealistic door flinging</li>
+            </ul>
+        </div>
+    </div>
+
+    <div style="background-color: #2d2d30; padding: 25px; border-radius: 8px; margin-bottom: 25px;">
+        <h2 style="color: #569cd6; margin-top: 0; font-size: 28px; border-bottom: 2px solid #569cd6; padding-bottom: 10px;">Step 7: Test Your Door</h2>
+
+        <ol style="margin: 15px 0; padding-left: 25px; font-size: 16px;">
+            <li style="margin-bottom: 12px;">Enter Play Mode</li>
+            <li style="margin-bottom: 12px;">Use your VR controllers (or XR Device Simulator)</li>
+            <li style="margin-bottom: 12px;">Grab the door with the grip button</li>
+            <li style="margin-bottom: 12px;">Push or pull to swing the door open</li>
+            <li style="margin-bottom: 12px;">Release to let go</li>
+        </ol>
+    </div>
+
+    <div style="background-color: #3a2929; padding: 25px; border-radius: 8px; margin-bottom: 25px; border-left: 4px solid #f48771;">
+        <h2 style="color: #f48771; margin-top: 0; font-size: 28px;">🔧 Troubleshooting</h2>
+
+        <div style="margin-bottom: 20px;">
+            <h3 style="color: #f48771; font-size: 20px; margin-bottom: 10px;">Door falls down:</h3>
+            <ul style="margin: 5px 0; padding-left: 25px;">
+                <li>Check that "Use Gravity" is OFF on the door's Rigidbody</li>
+            </ul>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <h3 style="color: #f48771; font-size: 20px; margin-bottom: 10px;">Door doesn't move:</h3>
+            <ul style="margin: 5px 0; padding-left: 25px;">
+                <li style="margin-bottom: 5px;">Ensure the door's Rigidbody is NOT kinematic</li>
+                <li style="margin-bottom: 5px;">Check that the DoorFrameAnchor's Rigidbody IS kinematic</li>
+                <li>Verify the Connected Body is set to your anchor</li>
+            </ul>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <h3 style="color: #f48771; font-size: 20px; margin-bottom: 10px;">Door spins wildly:</h3>
+            <ul style="margin: 5px 0; padding-left: 25px;">
+                <li style="margin-bottom: 5px;">Increase Angular Drag (try 10-15)</li>
+                <li style="margin-bottom: 5px;">Check that rotation limits are enabled</li>
+                <li>Verify the axis is correct</li>
+            </ul>
+        </div>
+    </div>
+
+    <div style="background-color: #2d453e; padding: 25px; border-radius: 8px; margin-bottom: 25px; border-left: 4px solid #4ec9b0;">
+        <h2 style="color: #4ec9b0; margin-top: 0; font-size: 28px;">✅ Summary</h2>
+        <p style="margin-bottom: 15px; font-size: 16px;">You've successfully created a VR interactive door! Key takeaways:</p>
+        <ul style="margin: 10px 0; padding-left: 25px; font-size: 16px;">
+            <li style="margin-bottom: 10px;">✅ Doors need a Rigidbody (non-kinematic) for physics</li>
+            <li style="margin-bottom: 10px;">✅ Hinge Joint connects the door to a fixed anchor point</li>
+            <li style="margin-bottom: 10px;">✅ Limits prevent unrealistic rotation</li>
+            <li style="margin-bottom: 10px;">✅ XR Grab Interactable makes it grabbable in VR</li>
+            <li style="margin-bottom: 10px;">✅ The anchor must be kinematic to stay in place</li>
+        </ul>
+    </div>
+
+    <div style="background-color: #2d2d30; padding: 25px; border-radius: 8px; text-align: center;">
+        <h2 style="color: #569cd6; margin-top: 0; font-size: 28px;">🚀 Happy VR Development!</h2>
+        <p style="color: #b5b5b5; font-size: 14px; margin: 0;">Created with ❤️ for Unity XR developers</p>
+    </div>
+
+</body>
+</html>
